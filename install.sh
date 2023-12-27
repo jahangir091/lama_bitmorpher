@@ -7,7 +7,7 @@ conda remove ffmpeg -y
 
 apt install libgl1 libglib2.0-0 ffmpeg gcc build-essential nginx -y
 
-add-apt-repository ppa:deadsnakes/ppa
+add-apt-repository ppa:deadsnakes/ppa -y
 
 apt install python3.10 -y
 
@@ -21,4 +21,4 @@ cd lama-custom
 
 pip install .
 
-python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8005
+#python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8005
