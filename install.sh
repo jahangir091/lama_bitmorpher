@@ -15,6 +15,10 @@ python3.10 -m venv venv
 
 source venv/bin/activate
 
+git clone https://github.com/jahangir091/lama-custom.git
+
+cd lama-custom
+
 pip install .
 
 python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8005
