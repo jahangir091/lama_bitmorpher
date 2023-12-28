@@ -260,6 +260,7 @@ def object_remove():
         "server_process_time": time.time() - start_time
     }
     socketio.emit("diffusion_finish")
+    logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
     return out_image, 200
 
