@@ -14,9 +14,9 @@ apt update
 
 #apt install python3.10 -y
 
-python3.11 -m venv venv
+python3 -m venv venv_lama
 
-source venv/bin/activate
+source venv_lama/bin/activate
 
 git clone https://github.com/jahangir091/lama-custom.git
 
