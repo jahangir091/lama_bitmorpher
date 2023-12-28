@@ -260,8 +260,8 @@ def object_remove():
         "server_process_time": time.time() - start_time
     }
     socketio.emit("diffusion_finish")
-    response = make_response(jsonify(response_data), 200)
-    return response
+    # response = make_response(jsonify(response_data), 200)
+    return out_image, 200
 
 
 @app.route("/save_image", methods=["POST"])
@@ -345,6 +345,7 @@ def media_thumbnail_file(tab, filename):
 
 @app.route("/inpaint", methods=["POST"])
 def process():
+    stime = time.time()
     input = request.files
     # RGB
     origin_image_bytes = input["image"].read()
@@ -466,6 +467,7 @@ def process():
     response.headers["X-Seed"] = str(config.sd_seed)
 
     socketio.emit("diffusion_finish")
+    logger.info("******** server process time taken: {0}".format(time.time()-stime))
     return response
 
 

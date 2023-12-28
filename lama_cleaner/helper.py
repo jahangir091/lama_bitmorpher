@@ -158,8 +158,11 @@ def pil_to_bytes(pil_img, ext: str, quality: int = 95, exif_infos={}) -> bytes:
 
 def load_img(img_bytes, gray: bool = False, return_exif: bool = False):
     alpha_channel = None
-    # image = Image.open(io.BytesIO(img_bytes))
-    image = Image.open(BytesIO(base64.b64decode(img_bytes)))
+    if isinstance(img_bytes, str):
+        image = Image.open(BytesIO(base64.b64decode(img_bytes)))
+    else:
+        image = Image.open(io.BytesIO(img_bytes))
+    # image = Image.open(BytesIO(base64.b64decode(img_bytes)))
 
     if return_exif:
         info = image.info or {}
