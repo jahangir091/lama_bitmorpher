@@ -33,7 +33,7 @@ from lama_cleaner.plugins import (
     AnimeSeg,
 )
 from lama_cleaner.schema import Config
-from datetime import datetime
+from datetime import datetime, timezone
 
 try:
     torch._C._jit_override_can_fuse_on_cpu(False)
