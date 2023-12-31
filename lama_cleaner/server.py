@@ -33,6 +33,7 @@ from lama_cleaner.plugins import (
     AnimeSeg,
 )
 from lama_cleaner.schema import Config
+from datetime import datetime
 
 try:
     torch._C._jit_override_can_fuse_on_cpu(False)
@@ -146,6 +147,7 @@ def encode_pil_to_base64(image):
 
 @app.route("/new_inpaint", methods=["POST"])
 def object_remove():
+    server_hit_time = str(datetime.now(timezone.utc))
     start_time = time.time()
     input_data = request.json
     input_image = input_data['image']
@@ -256,6 +258,7 @@ def object_remove():
     bytes_data = bytes_io.getvalue()
     out_image = base64.b64encode(bytes_data)
     response_data = {
+        "server_hit_time": server_hit_time,
         "server_process_time": time.time() - start_time,
         "output_image" : out_image.decode("utf-8")
     }
