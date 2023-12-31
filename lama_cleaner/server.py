@@ -256,13 +256,13 @@ def object_remove():
     bytes_data = bytes_io.getvalue()
     out_image = base64.b64encode(bytes_data)
     response_data = {
-        "output_image" : out_image,
-        "server_process_time": time.time() - start_time
+        "server_process_time": time.time() - start_time,
+        "output_image" : out_image.decode("utf-8")
     }
     socketio.emit("diffusion_finish")
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
-    return out_image, 200
+    return response_data, 200
 
 
 @app.route("/save_image", methods=["POST"])
