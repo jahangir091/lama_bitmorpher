@@ -14,13 +14,13 @@ apt update
 
 #apt install python3.10 -y
 
-python3 -m venv venv_lama
+cd
+cd /home/
+git clone https://github.com/jahangir091/lama_bitmorpher.git
+cd lama_bitmorpher
 
+python3 -m venv .venv
 source venv_lama/bin/activate
-
-git clone https://github.com/jahangir091/lama-custom.git
-
-cd lama-custom
 
 pip install .
 
