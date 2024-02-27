@@ -7,7 +7,7 @@ Environment="PATH=/home/evobits/lama_bitmorpher/.venv/bin"
 WorkingDirectory=/home/evobits/lama_bitmorpher/
 #ExecStartPre=/bin/bash -c 'mkdir -p /run/lama; chown www-data:www-data /run/lama'
 #ExecStart=/home/lama_bitmorpher/.venv/bin/gunicorn --workers 3 --bind unix:/run/lama/object_remove.sock wsgi:app
-ExecStart=/home/evobits/lama_bitmorpher/.venv/bin/python /home/evobits/lama_bitmorpher/main.py --model=realisticVision1.4 --device=cuda --host=0.0.0.0 --port=8040
+ExecStart=/home/evobits/lama_bitmorpher/.venv/bin/python /home/evobits/lama_bitmorpher/main.py --model=realisticVision1.4 --device=cuda --host=127.0.0.1 --port=8040 --enable-xformers
 StandardOutput=append:/var/log/object_replace/access.log
 StandardError=append:/var/log/object_replace/error.log
 
