@@ -484,7 +484,17 @@ def process():
     return response
 
 
-@app.route("/object_replace", methods=["POST"])
+@app.route("/ai/api/v1/object-replace-server-test", methods=["GET"])
+def upscaler_server_test():
+    return {"Object replace server is working fine!"}
+
+
+@app.route("/ai/api/v1/object-remove-server-test", methods=["GET"])
+def upscaler_server_test():
+    return {"Object replace server is working fine!"}
+
+
+@app.route("/ai/api/v1/object_replace", methods=["POST"])
 def object_replace():
     server_hit_time = str(datetime.now(timezone.utc))
     start_time = time.time()
