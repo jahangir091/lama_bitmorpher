@@ -485,12 +485,12 @@ def process():
 
 
 @app.route("/ai/api/v1/object-replace-server-test", methods=["GET"])
-def upscaler_server_test():
+def object_replace_server_test():
     return {"Object replace server is working fine!"}
 
 
 @app.route("/ai/api/v1/object-remove-server-test", methods=["GET"])
-def upscaler_server_test():
+def object_remove_server_test():
     return {"Object replace server is working fine!"}
 
 
