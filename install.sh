@@ -25,11 +25,14 @@ source .venv/bin/activate
 pip install .
 
 cp lama_object_remove_python.service /etc/systemd/system/
+cp lama_object_remove_python.service /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable myservice
+systemctl enable lama_object_remove_python
 service lama_object_remove_python start
 
-cp lama_object_remove_ngix.conf /etc/nginx/sites-available/
+cp lama_object_remove_nginx.conf /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/lama_object_remove_ngix.conf /etc/nginx/sites-enabled/
 service nginx restart
 #python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8005
+#python main.py --model=realisticVision1.4 --device=cuda --host=0.0.0.0 --port=8004
+#python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8006 --enable-remove-bg --enable-realesrgan --realesrgan-device=cuda --realesrgan-no-half --enable-restoreformer --restoreformer-device=cuda --enable-gfpgan --gfpgan-device=cuda

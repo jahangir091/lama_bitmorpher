@@ -475,6 +475,128 @@ def process():
     return response
 
 
+@app.route("/object_replace", methods=["POST"])
+def object_replace():
+    server_hit_time = str(datetime.now(timezone.utc))
+    start_time = time.time()
+    input_data = request.json
+    input_image = input_data['image']
+    input_mask = input_data['mask']
+    image, alpha_channel, exif_infos = load_img(input_image, return_exif=True)
+
+    mask, _ = load_img(input_mask, gray=True)
+    mask = cv2.threshold(mask, 127, 255, cv2.THRESH_BINARY)[1]
+
+    if image.shape[:2] != mask.shape[:2]:
+        return (
+            f"Mask shape{mask.shape[:2]} not queal to Image shape{image.shape[:2]}",
+            400,
+        )
+
+    original_shape = image.shape
+    interpolation = cv2.INTER_CUBIC
+
+    form = input_data
+    size_limit = max(image.shape)
+
+    if "paintByExampleImage" in input_data:
+        paint_by_example_example_image, _ = load_img(
+            input_data["paintByExampleImage"]
+        )
+        paint_by_example_example_image = Image.fromarray(paint_by_example_example_image)
+    else:
+        paint_by_example_example_image = None
+
+    config = Config(
+        ldm_steps=form["ldmSteps"],
+        ldm_sampler=form["ldmSampler"],
+        hd_strategy=form["hdStrategy"],
+        zits_wireframe=form["zitsWireframe"],
+        hd_strategy_crop_margin=form["hdStrategyCropMargin"],
+        hd_strategy_crop_trigger_size=form["hdStrategyCropTrigerSize"],
+        hd_strategy_resize_limit=form["hdStrategyResizeLimit"],
+        prompt=form["prompt"],
+        negative_prompt=form["negativePrompt"],
+        use_croper=form["useCroper"],
+        croper_x=form["croperX"],
+        croper_y=form["croperY"],
+        croper_height=form["croperHeight"],
+        croper_width=form["croperWidth"],
+        sd_scale=form["sdScale"],
+        sd_mask_blur=form["sdMaskBlur"],
+        sd_strength=form["sdStrength"],
+        sd_steps=form["sdSteps"],
+        sd_guidance_scale=form["sdGuidanceScale"],
+        sd_sampler=form["sdSampler"],
+        sd_seed=form["sdSeed"],
+        sd_match_histograms=form["sdMatchHistograms"],
+        cv2_flag=form["cv2Flag"],
+        cv2_radius=form["cv2Radius"],
+        paint_by_example_steps=form["paintByExampleSteps"],
+        paint_by_example_guidance_scale=form["paintByExampleGuidanceScale"],
+        paint_by_example_mask_blur=form["paintByExampleMaskBlur"],
+        paint_by_example_seed=form["paintByExampleSeed"],
+        paint_by_example_match_histograms=form["paintByExampleMatchHistograms"],
+        paint_by_example_example_image=paint_by_example_example_image,
+        p2p_steps=form["p2pSteps"],
+        p2p_image_guidance_scale=form["p2pImageGuidanceScale"],
+        p2p_guidance_scale=form["p2pGuidanceScale"],
+        controlnet_conditioning_scale=form["controlnet_conditioning_scale"],
+        controlnet_method=form["controlnet_method"],
+    )
+
+    if config.sd_seed == -1:
+        config.sd_seed = random.randint(1, 999999999)
+    if config.paint_by_example_seed == -1:
+        config.paint_by_example_seed = random.randint(1, 999999999)
+
+    logger.info(f"Origin image shape: {original_shape}")
+    image = resize_max_size(image, size_limit=size_limit, interpolation=interpolation)
+
+    mask = resize_max_size(mask, size_limit=size_limit, interpolation=interpolation)
+    try:
+        res_np_img = model(image, mask, config)
+    except RuntimeError as e:
+        if "CUDA out of memory. " in str(e):
+            # NOTE: the string may change?
+            return "CUDA out of memory", 500
+        else:
+            logger.exception(e)
+            return f"{str(e)}", 500
+    finally:
+        torch_gc()
+
+    res_np_img = cv2.cvtColor(res_np_img.astype(np.uint8), cv2.COLOR_BGR2RGB)
+    if alpha_channel is not None:
+        if alpha_channel.shape[:2] != res_np_img.shape[:2]:
+            alpha_channel = cv2.resize(
+                alpha_channel, dsize=(res_np_img.shape[1], res_np_img.shape[0])
+            )
+        res_np_img = np.concatenate(
+            (res_np_img, alpha_channel[:, :, np.newaxis]), axis=-1
+        )
+
+    ext = "jpeg" #get_image_ext(origin_image_bytes)
+    bytes_io = io.BytesIO(
+        pil_to_bytes(
+            Image.fromarray(res_np_img),
+            ext,
+            quality=image_quality,
+            exif_infos=exif_infos,
+        )
+    )
+    bytes_data = bytes_io.getvalue()
+    out_image = base64.b64encode(bytes_data)
+    response_data = {
+        "server_hit_time": server_hit_time,
+        "server_process_time": time.time() - start_time,
+        "output_image" : out_image.decode("utf-8")
+    }
+    logger.info("********* server process time taken: {0}".format(time.time()-start_time))
+    # response = make_response(jsonify(response_data), 200)
+    return response_data, 200
+
+
 @app.route("/run_plugin", methods=["POST"])
 def run_plugin():
     form = request.form
