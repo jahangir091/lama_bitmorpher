@@ -489,6 +489,16 @@ def object_replace():
     server_hit_time = str(datetime.now(timezone.utc))
     start_time = time.time()
     input_data = request.json
+
+    if not input_data.get("prompt", None):
+        return "No promt provided", 400
+
+    if not input_data.get("image", None):
+        return "No input image provided", 400
+
+    if not input_data.get("mask", None):
+        return "No mask for input image provided", 400
+
     input_image = input_data['image']
     input_mask = input_data['mask']
     image, alpha_channel, exif_infos = load_img(input_image, return_exif=True)
@@ -517,41 +527,41 @@ def object_replace():
         paint_by_example_example_image = None
 
     config = Config(
-        ldm_steps=form["ldmSteps"],
-        ldm_sampler=form["ldmSampler"],
-        hd_strategy=form["hdStrategy"],
-        zits_wireframe=form["zitsWireframe"],
-        hd_strategy_crop_margin=form["hdStrategyCropMargin"],
-        hd_strategy_crop_trigger_size=form["hdStrategyCropTrigerSize"],
-        hd_strategy_resize_limit=form["hdStrategyResizeLimit"],
-        prompt=form["prompt"],
-        negative_prompt=form["negativePrompt"],
-        use_croper=form["useCroper"],
-        croper_x=form["croperX"],
-        croper_y=form["croperY"],
-        croper_height=form["croperHeight"],
-        croper_width=form["croperWidth"],
-        sd_scale=form["sdScale"],
-        sd_mask_blur=form["sdMaskBlur"],
-        sd_strength=form["sdStrength"],
-        sd_steps=form["sdSteps"],
-        sd_guidance_scale=form["sdGuidanceScale"],
-        sd_sampler=form["sdSampler"],
-        sd_seed=form["sdSeed"],
-        sd_match_histograms=form["sdMatchHistograms"],
-        cv2_flag=form["cv2Flag"],
-        cv2_radius=form["cv2Radius"],
-        paint_by_example_steps=form["paintByExampleSteps"],
-        paint_by_example_guidance_scale=form["paintByExampleGuidanceScale"],
-        paint_by_example_mask_blur=form["paintByExampleMaskBlur"],
-        paint_by_example_seed=form["paintByExampleSeed"],
-        paint_by_example_match_histograms=form["paintByExampleMatchHistograms"],
+        ldm_steps=form.get("ldmSteps", 25),
+        ldm_sampler=form.get("ldmSampler", "plms"),
+        hd_strategy=form.get("hdStrategy", "Crop"),
+        zits_wireframe=form.get("zitsWireframe", True),
+        hd_strategy_crop_margin=form.get("hdStrategyCropMargin", 128),
+        hd_strategy_crop_trigger_size=form.get("hdStrategyCropTrigerSize", 1024),
+        hd_strategy_resize_limit=form.get("hdStrategyResizeLimit", 1024),
+        prompt=form.get("prompt", ''),
+        negative_prompt=form.get("negativePrompt", ''),
+        use_croper=form.get("useCroper", False),
+        croper_x=form.get("croperX", 0),
+        croper_y=form.get("croperY", 0),
+        croper_height=form.get("croperHeight", 512),
+        croper_width=form.get("croperWidth", 512),
+        sd_scale=form.get("sdScale", 1),
+        sd_mask_blur=form.get("sdMaskBlur", 5),
+        sd_strength=form.get("sdStrength", 0.75),
+        sd_steps=form.get("sdSteps", 40),
+        sd_guidance_scale=form.get("sdGuidanceScale", 7.5),
+        sd_sampler=form.get("sdSampler", "uni_pc"),
+        sd_seed=form.get("sdSeed", -1),
+        sd_match_histograms=form.get("sdMatchHistograms", False),
+        cv2_flag=form.get("cv2Flag", "INPAINT_NS"),
+        cv2_radius=form.get("cv2Radius", 5),
+        paint_by_example_steps=form.get("paintByExampleSteps", 40),
+        paint_by_example_guidance_scale=form.get("paintByExampleGuidanceScale", 7.5),
+        paint_by_example_mask_blur=form.get("paintByExampleMaskBlur", 5),
+        paint_by_example_seed=form.get("paintByExampleSeed", -1),
+        paint_by_example_match_histograms=form.get("paintByExampleMatchHistograms", False),
         paint_by_example_example_image=paint_by_example_example_image,
-        p2p_steps=form["p2pSteps"],
-        p2p_image_guidance_scale=form["p2pImageGuidanceScale"],
-        p2p_guidance_scale=form["p2pGuidanceScale"],
-        controlnet_conditioning_scale=form["controlnet_conditioning_scale"],
-        controlnet_method=form["controlnet_method"],
+        p2p_steps=form.get("p2pSteps", 40),
+        p2p_image_guidance_scale=form.get("p2pImageGuidanceScale", 1.5),
+        p2p_guidance_scale=form.get("p2pGuidanceScale", 7.5),
+        controlnet_conditioning_scale=form.get("controlnet_conditioning_scale", 0.4),
+        controlnet_method=form.get("controlnet_method", "control_v11p_sd15_canny"),
     )
 
     if config.sd_seed == -1:
@@ -591,10 +601,9 @@ def object_replace():
     response_data = {
         "server_hit_time": server_hit_time,
         "server_process_time": time.time() - start_time,
-        "output_image_url" : out_image_path
+        "output_image_url": 'media/' + out_image_path.split('/')[-1]
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
-    # response = make_response(jsonify(response_data), 200)
     return response_data, 200
 
 

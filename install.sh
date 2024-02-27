@@ -24,6 +24,8 @@ source .venv/bin/activate
 
 pip install .
 
+# pip install -U xformers --index-url https://download.pytorch.org/whl/cu121
+
 cp lama_object_remove_python.service /etc/systemd/system/
 cp lama_object_remove_python.service /etc/systemd/system/
 systemctl daemon-reload
@@ -34,5 +36,5 @@ cp lama_object_remove_nginx.conf /etc/nginx/sites-available/
 ln -s /etc/nginx/sites-available/lama_object_remove_ngix.conf /etc/nginx/sites-enabled/
 service nginx restart
 #python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8005
-#python main.py --model=realisticVision1.4 --device=cuda --host=0.0.0.0 --port=8004
+#python main.py --model=realisticVision1.4 --device=cuda --host=0.0.0.0 --port=8007 --enable-xformers
 #python main.py --model=lama --device=cuda --host=0.0.0.0 --port=8006 --enable-remove-bg --enable-realesrgan --realesrgan-device=cuda --realesrgan-no-half --enable-restoreformer --restoreformer-device=cuda --enable-gfpgan --gfpgan-device=cuda
