@@ -599,7 +599,8 @@ def object_replace():
     out_image_path = get_img_path()
     pil_image.save(out_image_path)
     response_data = {
-        "server_hit_time": server_hit_time,
+        "success": True,
+        "message": "Returned output successfully",
         "server_process_time": time.time() - start_time,
         "output_image_url": 'media/' + out_image_path.split('/')[-1]
     }
