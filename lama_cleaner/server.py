@@ -146,9 +146,9 @@ def encode_pil_to_base64(image):
     return base64.b64encode(bytes_data)
 
 
-def get_img_path():
+def get_img_path(directory_name):
     current_dir = '/tmp'
-    img_directory = current_dir + '/.temp/object_replace_images/'
+    img_directory = current_dir + '/.temp' + directory_name
     os.makedirs(img_directory, exist_ok=True)
     img_file_name = uuid.uuid4().hex[:20] + '.jpg'
     return img_directory + img_file_name
@@ -269,21 +269,14 @@ def object_remove():
             (res_np_img, alpha_channel[:, :, np.newaxis]), axis=-1
         )
 
-    ext = "jpeg" #get_image_ext(origin_image_bytes)
-    bytes_io = io.BytesIO(
-        pil_to_bytes(
-            Image.fromarray(res_np_img),
-            ext,
-            quality=image_quality,
-            exif_infos=exif_infos,
-        )
-    )
-    bytes_data = bytes_io.getvalue()
-    out_image = base64.b64encode(bytes_data)
+    pil_image = Image.fromarray(res_np_img)
+    out_images_directory_name = '/object_remove_images/'
+    out_image_path = get_img_path(out_images_directory_name)
+    pil_image.save(out_image_path)
     response_data = {
         "server_hit_time": server_hit_time,
         "server_process_time": time.time() - start_time,
-        "output_image" : out_image.decode("utf-8")
+        "output_image" : 'media' + out_images_directory_name + out_image_path.split('/')[-1]
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
@@ -633,13 +626,14 @@ def object_replace():
         )
 
     pil_image = Image.fromarray(res_np_img)
-    out_image_path = get_img_path()
+    out_images_directory_name = '/object_replace_images/'
+    out_image_path = get_img_path(out_images_directory_name)
     pil_image.save(out_image_path)
     response_data = {
         "success": True,
         "message": "Returned output successfully",
         "server_process_time": time.time() - start_time,
-        "output_image_url": 'media/' + out_image_path.split('/')[-1]
+        "output_image_url": 'media' + out_images_directory_name + out_image_path.split('/')[-1]
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     return response_data, 200
