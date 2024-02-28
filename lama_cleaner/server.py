@@ -486,12 +486,12 @@ def process():
 
 @app.route("/ai/api/v1/object-replace-server-test", methods=["GET"])
 def object_replace_server_test():
-    return "Object replace server is working fine!", 200
+    return "Object replace server is working fine. OK!", 200
 
 
 @app.route("/ai/api/v1/object-remove-server-test", methods=["GET"])
 def object_remove_server_test():
-    return "Object replace server is working fine!", 200
+    return "Object replace server is working fine. OK!", 200
 
 
 @app.route("/ai/api/v1/object_replace", methods=["POST"])
