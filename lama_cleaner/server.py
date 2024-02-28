@@ -3,6 +3,7 @@ import os
 import hashlib
 import base64
 import uuid
+import threading
 
 os.environ["PYTORCH_ENABLE_MPS_FALLBACK"] = "1"
 
@@ -35,6 +36,8 @@ from lama_cleaner.plugins import (
 )
 from lama_cleaner.schema import Config
 from datetime import datetime, timezone
+
+lock = threading.Lock()
 
 try:
     torch._C._jit_override_can_fuse_on_cpu(False)
@@ -498,10 +501,6 @@ def object_replace_server_test():
 @app.route("/ai/api/v1/object-remove-server-test", methods=["GET"])
 def object_remove_server_test():
     return "Object remove server is working fine. OK!", 200
-
-
-import threading
-lock = threading.Lock()
 
 
 @app.route("/ai/api/v1/object_replace", methods=["POST"])
