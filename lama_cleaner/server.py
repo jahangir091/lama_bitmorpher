@@ -501,13 +501,27 @@ def object_replace():
     input_data = request.json
 
     if not input_data.get("prompt", None):
-        return "No promt provided", 400
+        return {
+            "success": False,
+            "message": "No promt provided",
+            "server_process_time": '',
+            "output_image_url": ''
+        }
 
     if not input_data.get("image", None):
-        return "No input image provided", 400
-
+        return {
+            "success": False,
+            "message": "No input image provided",
+            "server_process_time": '',
+            "output_image_url": ''
+        }
     if not input_data.get("mask", None):
-        return "No mask for input image provided", 400
+        return {
+            "success": False,
+            "message": "No mask for input image provided",
+            "server_process_time": '',
+            "output_image_url": ''
+        }
 
     input_image = input_data['image']
     input_mask = input_data['mask']
