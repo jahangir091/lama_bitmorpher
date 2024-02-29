@@ -277,7 +277,7 @@ def object_remove():
     out_image_path = get_img_path(out_images_directory_name)
     pil_image.save(out_image_path)
     response_data = {
-        "success": False,
+        "success": True,
         "message": "Returned data successfully",
         "server_process_time": time.time() - start_time,
         "output_image_url": 'media' + out_images_directory_name + out_image_path.split('/')[-1]
