@@ -277,9 +277,10 @@ def object_remove():
     out_image_path = get_img_path(out_images_directory_name)
     pil_image.save(out_image_path)
     response_data = {
-        "server_hit_time": server_hit_time,
+        "success": False,
+        "message": "Returned data successfully",
         "server_process_time": time.time() - start_time,
-        "output_image" : 'media' + out_images_directory_name + out_image_path.split('/')[-1]
+        "output_image_url": 'media' + out_images_directory_name + out_image_path.split('/')[-1]
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
