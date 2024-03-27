@@ -19,4 +19,5 @@ omegaconf
 controlnet-aux==0.0.3
 werkzeug==2.2.2
 accelerate
+boto3
 # pip install -U xformers --index-url https://download.pytorch.org/whl/cu121

@@ -37,6 +37,8 @@ from lama_cleaner.plugins import (
 from lama_cleaner.schema import Config
 from datetime import datetime, timezone
 
+from r2storage import r2_file_upload
+
 lock = threading.Lock()
 
 try:
@@ -276,11 +278,16 @@ def object_remove():
     out_images_directory_name = '/object_remove_images/'
     out_image_path = get_img_path(out_images_directory_name)
     pil_image.save(out_image_path)
+    r2_file_upload(out_image_path)
+    public_url = "https://pub-288c4f7ae2ab4568ae80826ea3575a6b.r2.dev"
+    r2_file_url = public_url + '/' + out_image_path.split('/')[-1]
+
     response_data = {
         "success": True,
         "message": "Returned data successfully",
         "server_process_time": time.time() - start_time,
-        "output_image_url": '/media' + out_images_directory_name + out_image_path.split('/')[-1]
+        # "output_image_url": '/media' + out_images_directory_name + out_image_path.split('/')[-1]
+        "output_image_url": r2_file_url
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
