@@ -281,7 +281,7 @@ def object_remove():
         "success": True,
         "message": "Returned data successfully",
         "server_process_time": time.time() - start_time,
-        "output_image_url": '/' + str(environ.get('SERVER_NO')) + '/media' + out_images_directory_name + out_image_path.split('/')[-1]
+        "output_image_url": '/' + server_name + '/media' + out_images_directory_name + out_image_path.split('/')[-1]
     }
     logger.info("********* server process time taken: {0}".format(time.time()-start_time))
     # response = make_response(jsonify(response_data), 200)
@@ -849,6 +849,9 @@ def main(args):
     global is_controlnet
     global controlnet_method
     global image_quality
+    global server_name
+
+    server_name = args.server_name
 
     build_plugins(args)
 

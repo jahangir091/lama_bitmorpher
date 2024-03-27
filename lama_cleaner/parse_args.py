@@ -15,6 +15,7 @@ def parse_args():
     )
     parser.add_argument("--host", default="127.0.0.1")
     parser.add_argument("--port", default=8080, type=int)
+    parser.add_argument("--server_name")
 
     parser.add_argument(
         "--config-installer",
